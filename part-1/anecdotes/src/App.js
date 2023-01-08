@@ -12,14 +12,24 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
+  const [votes, setVotes] = useState([0, 0, 0, 0, 0, 0, 0]);
+
   const updateIndex = () => {
-    return Math.floor(Math.random() * anecdotes.length);
+    let randomIndex = Math.floor(Math.random() * anecdotes.length);
+    setSelected(randomIndex);
+  };
+  const updateVotes = () => {
+    const copy = [...votes];
+    copy[selected] += 1;
+    setVotes(copy);
   };
 
   return (
     <div>
       <p>{anecdotes[selected]}</p>
-      <button onClick={() => setSelected(updateIndex)}>Next anecdote</button>
+      <button onClick={updateVotes}>Vote</button>
+      <button onClick={updateIndex}>Next anecdote</button>
+      <p>{votes}</p>
     </div>
   );
 };
