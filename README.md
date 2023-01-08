@@ -22,3 +22,10 @@ Basics of the Git version control system.
 
 - General info
 - Fundamental of web apps
+
+#### [Part 1: Introduction to React](https://github.com/py-piyush/full-stack-open/tree/main/part-1)
+
+- Introduction to React
+- JavaScript
+- Component state, event hadlers
+- A more complex state, debuggin React apps
