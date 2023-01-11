@@ -9,6 +9,7 @@ const CountryData = ({ country }) => {
   return (
     <div>
       <h1>{country.name.common}</h1>
+      <h4>Official name: {country.name.official}</h4>
       <p>Capital: {capital}</p>
       <p>
         area: {area.toLocaleString()} km<sup>2</sup>
@@ -30,6 +31,7 @@ const Countries = ({ name }) => {
 
   useEffect(() => {
     setErrorMessage("");
+    // console.log("I fired");
     if (name !== "") {
       axios
         .get(`https://restcountries.com/v3.1/name/${name}`)
@@ -47,7 +49,10 @@ const Countries = ({ name }) => {
     return <div>Too many matches, specify another filter</div>;
   } else if (size > 1) {
     return countries.map((country) => (
-      <div key={country.name.common}>{country.name.common}</div>
+      <div key={country.name.common}>
+        {country.name.common}{" "}
+        <button onClick={() => setCountries([country])}>Show</button>{" "}
+      </div>
     ));
   } else if (size === 1) {
     return <CountryData country={countries[0]} />;
