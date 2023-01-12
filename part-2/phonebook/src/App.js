@@ -23,11 +23,14 @@ const App = () => {
     const personObj = { name: newName, number: newNumber };
     const check = persons.filter((person) => person.name === newName);
     if (check.length > 0) {
-      alert(
-        `${newName} is already added to phonebook. Do you want to replace the phone number with new one?`
-      );
-      updateNumber(check[0].id);
-      return;
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook. Do you want to replace the phone number with new one?`
+        )
+      ) {
+        updateNumber(check[0].id);
+        return;
+      }
     }
     services.create(personObj).then((returnedPerson) => {
       setPersons(persons.concat(returnedPerson));
@@ -37,7 +40,7 @@ const App = () => {
       });
       setTimeout(() => {
         setMsg(null);
-      }, 5000);
+      }, 2000);
     });
     setNewName("");
     setNewNumber("");
@@ -62,7 +65,7 @@ const App = () => {
         });
         setTimeout(() => {
           setMsg(null);
-        }, 5000);
+        }, 2000);
       })
       .catch((error) => {
         setMsg({
@@ -71,7 +74,7 @@ const App = () => {
         });
         setTimeout(() => {
           setMsg(null);
-        }, 5000);
+        }, 2000);
       });
   };
 
@@ -88,13 +91,13 @@ const App = () => {
         });
         setTimeout(() => {
           setMsg(null);
-        }, 5000);
+        }, 2000);
       })
       .catch((error) => {
         setMsg({ msg: `${updatePerson.name} does not exist.`, class: "error" });
         setTimeout(() => {
           setMsg(null);
-        }, 5000);
+        }, 2000);
       });
     setNewName("");
     setNewNumber("");
