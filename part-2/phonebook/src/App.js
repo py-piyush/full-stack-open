@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Filter from "./components/Filter.js";
 import PersonForm from "./components/PersonForm.js";
 import Persons from "./components/Persons.js";
+import Notification from "./components/Notification.js";
 import services from "./services/peronsService.js";
 
 const App = () => {
@@ -9,6 +10,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [msg, setMsg] = useState(null);
 
   useEffect(() => {
     services.getAll().then((initialPersons) => {
@@ -27,9 +29,16 @@ const App = () => {
       updateNumber(check[0].id);
       return;
     }
-    services
-      .create(personObj)
-      .then((returnedPerson) => setPersons(persons.concat(returnedPerson)));
+    services.create(personObj).then((returnedPerson) => {
+      setPersons(persons.concat(returnedPerson));
+      setMsg({
+        msg: `${returnedPerson.name} Added Successfully`,
+        class: "success",
+      });
+      setTimeout(() => {
+        setMsg(null);
+      }, 5000);
+    });
     setNewName("");
     setNewNumber("");
   };
@@ -45,9 +54,25 @@ const App = () => {
     if (!confirm) return;
     services
       .deletePerson(id)
-      .then((returnedPerson) =>
-        setPersons(persons.filter((person) => person.id !== id))
-      );
+      .then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
+        setMsg({
+          msg: `${personToDelete.name} deleted successfully`,
+          class: "success",
+        });
+        setTimeout(() => {
+          setMsg(null);
+        }, 5000);
+      })
+      .catch((error) => {
+        setMsg({
+          msg: `${personToDelete.name} does not exist.`,
+          class: "error",
+        });
+        setTimeout(() => {
+          setMsg(null);
+        }, 5000);
+      });
   };
 
   const updateNumber = (id) => {
@@ -55,9 +80,22 @@ const App = () => {
     const changedNumber = { ...updatePerson, number: newNumber };
     services
       .update(id, changedNumber)
-      .then((returnedPerson) =>
-        setPersons(persons.map((p) => (p.id === id ? returnedPerson : p)))
-      );
+      .then((returnedPerson) => {
+        setPersons(persons.map((p) => (p.id === id ? returnedPerson : p)));
+        setMsg({
+          msg: `Phone number updated for ${returnedPerson.name}`,
+          class: "success",
+        });
+        setTimeout(() => {
+          setMsg(null);
+        }, 5000);
+      })
+      .catch((error) => {
+        setMsg({ msg: `${updatePerson.name} does not exist.`, class: "error" });
+        setTimeout(() => {
+          setMsg(null);
+        }, 5000);
+      });
     setNewName("");
     setNewNumber("");
   };
@@ -65,6 +103,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={msg} />
       <Filter filter={filter} setFilter={setFilter} />
       <h2>Add new</h2>
       <PersonForm
