@@ -29,3 +29,11 @@ Basics of the Git version control system.
 - JavaScript
 - Component state, event hadlers
 - A more complex state, debuggin React apps
+
+#### [Part 2: Communicating with Server](https://github.com/py-piyush/full-stack-open/tree/main/part-2)
+
+- Rendering a collection, modules
+- Forms
+- Getting data from server
+- Altering data in server
+- Adding styles to React App
