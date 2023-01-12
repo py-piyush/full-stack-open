@@ -21,7 +21,10 @@ const App = () => {
     const personObj = { name: newName, number: newNumber };
     const check = persons.filter((person) => person.name === newName);
     if (check.length > 0) {
-      alert(`${newName} is already added to phonebook`);
+      alert(
+        `${newName} is already added to phonebook. Do you want to replace the phone number with new one?`
+      );
+      updateNumber(check[0].id);
       return;
     }
     services
@@ -36,15 +39,27 @@ const App = () => {
   );
 
   const handleDelete = (id) => {
-    const deletePerson = persons.find((person) => id === person.id);
-    console.log(deletePerson);
-    const confirm = window.confirm(`Delete "${deletePerson.name}" ?`);
+    const personToDelete = persons.find((person) => id === person.id);
+    // console.log(deletePerson);
+    const confirm = window.confirm(`Delete "${personToDelete.name}" ?`);
     if (!confirm) return;
     services
       .deletePerson(id)
       .then((returnedPerson) =>
         setPersons(persons.filter((person) => person.id !== id))
       );
+  };
+
+  const updateNumber = (id) => {
+    const updatePerson = persons.find((person) => person.id === id);
+    const changedNumber = { ...updatePerson, number: newNumber };
+    services
+      .update(id, changedNumber)
+      .then((returnedPerson) =>
+        setPersons(persons.map((p) => (p.id === id ? returnedPerson : p)))
+      );
+    setNewName("");
+    setNewNumber("");
   };
 
   return (
