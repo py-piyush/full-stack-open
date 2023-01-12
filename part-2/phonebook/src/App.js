@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Filter from "./components/Filter.js";
 import PersonForm from "./components/PersonForm.js";
 import Persons from "./components/Persons.js";
+import services from "./services/peronsService.js";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,9 +11,8 @@ const App = () => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      const data = response.data;
-      setPersons(data);
+    services.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
     });
   }, []);
 
@@ -25,9 +24,9 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
       return;
     }
-    axios
-      .post("http://localhost:3001/persons", personObj)
-      .then((response) => setPersons(persons.concat(response.data)));
+    services
+      .create(personObj)
+      .then((returnedPerson) => setPersons(persons.concat(returnedPerson)));
     setNewName("");
     setNewNumber("");
   };
