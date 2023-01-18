@@ -5,19 +5,19 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 
-morgan.token("post", (req) => {
-  if (req.method === "POST") {
-    return JSON.stringify(req.body);
-  }
-  return "";
-});
+// morgan.token("post", (req) => {
+//   if (req.method === "POST") {
+//     return JSON.stringify(req.body);
+//   }
+//   return "";
+// });
 
-morgan.format(
-  "getPost",
-  ":method :url :status :res[content-length] - :response-time ms :post"
-);
+// morgan.format(
+//   "getPost",
+//   ":method :url :status :res[content-length] - :response-time ms :post"
+// );
 
-app.use(morgan("getPost"));
+// app.use(morgan("getPost"));
 app.use(cors());
 
 let persons = [
@@ -104,7 +104,7 @@ app.get("/info", (req, res) => {
   res.send(`Phonebook has info for ${info.length} people<br><br>${info.date}`);
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}...`);
 });
