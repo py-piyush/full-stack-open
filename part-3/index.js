@@ -38,10 +38,36 @@ app.get("/api/persons/:id", (request, response) => {
   else response.status(404).end();
 });
 
+const generateID = () => Math.floor(Math.random() * 1000);
+const check = (id) => {
+  const present = persons.find((p) => p.id === id);
+  // console.log(present);
+  if (present) return true;
+  return false;
+};
+
+app.post("/api/persons", (request, response) => {
+  const body = request.body;
+  if (!body.name)
+    return response.status(404).json({ error: "content missing" });
+
+  let id = generateID();
+  while (check(id)) {
+    id = generateID();
+  }
+  const person = {
+    id: id,
+    name: body.name,
+    number: body.number,
+  };
+  persons = persons.concat(person);
+  response.json(person);
+});
+
 app.delete("/api/persons/:id", (request, response) => {
   const id = parseInt(request.params.id);
   persons = persons.filter((p) => p.id !== id);
-  console.log(persons);
+  // console.log(persons);
   response.status(204).end();
 });
 
