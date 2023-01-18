@@ -48,13 +48,22 @@ const check = (id) => {
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
-  if (!body.name)
-    return response.status(404).json({ error: "content missing" });
 
+  // error handling
+  if (!body.name) return response.status(400).json({ error: "name missing" });
+  if (!body.number)
+    return response.status(400).json({ error: "number missing" });
+  name_exist = persons.find((p) => p.name === body.name);
+  if (name_exist)
+    return response.status(400).json({ error: "name must be unique" });
+
+  // generating unique id
   let id = generateID();
   while (check(id)) {
     id = generateID();
   }
+
+  // creating and adding person
   const person = {
     id: id,
     name: body.name,
