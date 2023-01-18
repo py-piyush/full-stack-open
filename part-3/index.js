@@ -19,6 +19,7 @@ app.use(express.json());
 
 // app.use(morgan("getPost"));
 app.use(cors());
+app.use(express.static("build"));
 
 let persons = [
   {

@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const baseUrl =
-  "https://full-stack-open-production-72dc.up.railway.app/api/persons";
+const baseUrl = "/api/persons";
 
 const getAll = () => {
   const request = axios.get(baseUrl);
