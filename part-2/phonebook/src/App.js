@@ -32,16 +32,28 @@ const App = () => {
         return;
       }
     }
-    services.create(personObj).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-      setMsg({
-        msg: `${returnedPerson.name} Added Successfully`,
-        class: "success",
+    services
+      .create(personObj)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setMsg({
+          msg: `${returnedPerson.name} Added Successfully`,
+          class: "success",
+        });
+        setTimeout(() => {
+          setMsg(null);
+        }, 2000);
+      })
+      .catch((error) => {
+        setMsg({
+          msg: error.response.data.error,
+          class: "error",
+        });
+        setTimeout(() => {
+          setMsg(null);
+        }, 2000);
+        console.log(error.response.data.error);
       });
-      setTimeout(() => {
-        setMsg(null);
-      }, 2000);
-    });
     setNewName("");
     setNewNumber("");
   };
@@ -69,7 +81,7 @@ const App = () => {
       })
       .catch((error) => {
         setMsg({
-          msg: `${personToDelete.name} does not exist.`,
+          msg: error.response.data.error,
           class: "error",
         });
         setTimeout(() => {
@@ -94,7 +106,10 @@ const App = () => {
         }, 2000);
       })
       .catch((error) => {
-        setMsg({ msg: `${updatePerson.name} does not exist.`, class: "error" });
+        setMsg({
+          msg: error.response.data.error,
+          class: "error",
+        });
         setTimeout(() => {
           setMsg(null);
         }, 2000);

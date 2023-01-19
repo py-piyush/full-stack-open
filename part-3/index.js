@@ -50,7 +50,7 @@ app.get("/api/persons", (request, response) => {
   People.find({}).then((result) => response.json(result));
 });
 
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
   const id = request.params.id;
   People.findById(id)
     .then((result) => {
@@ -68,7 +68,7 @@ app.get("/api/persons/:id", (request, response) => {
 //   return false;
 // };
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
   // error handling
@@ -90,10 +90,13 @@ app.post("/api/persons", (request, response) => {
     name: body.name,
     number: body.number,
   });
-  person.save().then((saved) => response.json(saved));
+  person
+    .save()
+    .then((saved) => response.json(saved))
+    .catch((error) => next(error));
 });
 
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
   const id = request.params.id;
   People.findByIdAndRemove(id)
     .then((result) => {
@@ -102,13 +105,17 @@ app.delete("/api/persons/:id", (request, response) => {
     .catch((error) => next(error));
 });
 
-app.put("/api/persons/:id", (request, response) => {
+app.put("/api/persons/:id", (request, response, next) => {
   const id = request.params.id;
   const body = request.body;
   const updatedPerson = {
     number: body.number,
   };
-  People.findByIdAndUpdate(id, updatedPerson, { new: true })
+  People.findByIdAndUpdate(id, updatedPerson, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
     .then((updated) => response.json(updated))
     .catch((error) => next(error));
 });
@@ -133,8 +140,11 @@ app.use(unknownEndpoint);
 
 const errorHandler = (error, request, response, next) => {
   console.log(error.message);
-  if (error.name === "CastError")
+  if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
+  }
   next(error);
 };
 app.use(errorHandler);
