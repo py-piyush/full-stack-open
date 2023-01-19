@@ -1,6 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const People = require("./models/people");
 
 const app = express();
 app.use(express.json());
@@ -45,23 +47,21 @@ let persons = [
 ];
 
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  People.find({}).then((result) => response.json(result));
 });
 
 app.get("/api/persons/:id", (request, response) => {
   const id = parseInt(request.params.id);
-  const person = persons.find((p) => p.id === id);
-  if (person) response.json(person);
-  else response.status(404).end();
+  People.findById(id).then((result) => response.json(result));
 });
 
-const generateID = () => Math.floor(Math.random() * 1000);
-const check = (id) => {
-  const present = persons.find((p) => p.id === id);
-  // console.log(present);
-  if (present) return true;
-  return false;
-};
+// const generateID = () => Math.floor(Math.random() * 1000);
+// const check = (id) => {
+//   const present = persons.find((p) => p.id === id);
+//   // console.log(present);
+//   if (present) return true;
+//   return false;
+// };
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
@@ -70,24 +70,22 @@ app.post("/api/persons", (request, response) => {
   if (!body.name) return response.status(400).json({ error: "name missing" });
   if (!body.number)
     return response.status(400).json({ error: "number missing" });
-  name_exist = persons.find((p) => p.name === body.name);
-  if (name_exist)
-    return response.status(400).json({ error: "name must be unique" });
+  // name_exist = People.find({ name: body.name });
+  // if (name_exist)
+  //   return response.status(400).json({ error: "name must be unique" });
 
   // generating unique id
-  let id = generateID();
-  while (check(id)) {
-    id = generateID();
-  }
+  // let id = generateID();
+  // while (check(id)) {
+  //   id = generateID();
+  // }
 
   // creating and adding person
-  const person = {
-    id: id,
+  const person = new People({
     name: body.name,
     number: body.number,
-  };
-  persons = persons.concat(person);
-  response.json(person);
+  });
+  person.save().then((saved) => response.json(saved));
 });
 
 app.delete("/api/persons/:id", (request, response) => {
