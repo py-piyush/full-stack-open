@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
@@ -149,6 +150,7 @@ const errorHandler = (error, request, response, next) => {
 };
 app.use(errorHandler);
 
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}...`);
