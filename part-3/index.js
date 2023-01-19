@@ -114,11 +114,15 @@ app.put("/api/persons/:id", (request, response) => {
 });
 
 app.get("/info", (req, res) => {
-  const info = {
-    length: persons.length,
-    date: new Date(),
-  };
-  res.send(`Phonebook has info for ${info.length} people<br><br>${info.date}`);
+  People.count({}).then((result) => {
+    const info = {
+      length: result,
+      date: new Date(),
+    };
+    res.send(
+      `Phonebook has info for ${info.length} people<br><br>${info.date}`
+    );
+  });
 });
 
 // ERROR HANDLERS
