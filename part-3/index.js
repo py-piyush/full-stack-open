@@ -102,6 +102,17 @@ app.delete("/api/persons/:id", (request, response) => {
     .catch((error) => next(error));
 });
 
+app.put("/api/persons/:id", (request, response) => {
+  const id = request.params.id;
+  const body = request.body;
+  const updatedPerson = {
+    number: body.number,
+  };
+  People.findByIdAndUpdate(id, updatedPerson, { new: true })
+    .then((updated) => response.json(updated))
+    .catch((error) => next(error));
+});
+
 app.get("/info", (req, res) => {
   const info = {
     length: persons.length,
