@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const mongoose = require("mongoose");
 
 if (process.argv.length < 3) {
@@ -20,7 +21,7 @@ const people = mongoose.model("People", personSchema);
 if (process.argv.length === 5) {
   mongoose
     .connect(url)
-    .then((result) => {
+    .then(() => {
       console.log("connected");
       const person = new people({
         name: process.argv[3],
@@ -38,7 +39,7 @@ if (process.argv.length === 5) {
 } else {
   mongoose.connect(url).then(() => {
     console.log("connected");
-    console.log(`phonebook:`);
+    console.log("phonebook:");
     people.find({}).then((result) => {
       result.forEach((p) => {
         console.log(p.name, p.number);
