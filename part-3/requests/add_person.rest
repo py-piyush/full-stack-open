@@ -31,6 +31,15 @@ Content-Type: application/json
     "number":"12345678"
 }
 
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "SIMBA",
+    "number":"gjkafd12345678"
+}
+
 
 ###
 GET http://localhost:3001/api/persons
