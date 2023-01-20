@@ -1,0 +1,12 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title":"Express.js Fundamentals",
+    "author": "Zulaikha Geer",
+    "url": "https://medium.com/edureka/expressjs-tutorial-795ad6e65ab3",
+    "likes": 0
+}
+
+###
+GET http://localhost:3003/api/blogs
