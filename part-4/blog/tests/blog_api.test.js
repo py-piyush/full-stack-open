@@ -122,6 +122,18 @@ describe("adding a new blog", () => {
     expect(response.body.likes).toBeDefined();
     expect(response.body.likes).toBe(0);
   });
+
+  test("return bad request if title/url is missing", async () => {
+    const blogObj = {
+      author: "James Williams",
+      likes: 500,
+    };
+    const response = await api.post("/api/blogs").send(blogObj).expect(400);
+    expect(response.body.error).toBe("title or url is missing");
+
+    const allBlogs = await api.get("/api/blogs");
+    expect(allBlogs.body).toHaveLength(blogs.length);
+  });
 });
 
 afterAll(async () => {

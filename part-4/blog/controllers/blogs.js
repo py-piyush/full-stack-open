@@ -7,6 +7,9 @@ blogsRouter.get("/", async (request, response) => {
 });
 
 blogsRouter.post("/", async (request, response) => {
+  if (!request.body.title || !request.body.url) {
+    response.status(400).json({ error: "title or url is missing" });
+  }
   const blog = new Blog(request.body);
 
   const result = await blog.save();
