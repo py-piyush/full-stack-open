@@ -77,6 +77,15 @@ describe("when there are blogs saved", () => {
     const response = await api.get("/api/blogs");
     expect(response.body).toHaveLength(blogs.length);
   });
+
+  test("unique identifier is id", async () => {
+    const response = await api
+      .get("/api/blogs")
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+    expect(response.body[0].id).toBeDefined();
+    expect(response.body[0]._id).not.toBeDefined();
+  });
 });
 
 afterAll(async () => {
