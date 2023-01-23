@@ -56,16 +56,15 @@ const blogs = [
   },
 ];
 
+beforeEach(async () => {
+  await Blog.deleteMany({});
+
+  for (let blog of blogs) {
+    const obj = new Blog(blog);
+    await obj.save();
+  }
+});
 describe("when there are blogs saved", () => {
-  beforeEach(async () => {
-    await Blog.deleteMany({});
-
-    for (let blog of blogs) {
-      const obj = new Blog(blog);
-      await obj.save();
-    }
-  });
-
   test("blogs are returned as json", async () => {
     await api
       .get("/api/blogs")
@@ -86,6 +85,28 @@ describe("when there are blogs saved", () => {
     expect(response.body[0].id).toBeDefined();
     expect(response.body[0]._id).not.toBeDefined();
   });
+});
+
+describe("adding a new blog", () => {
+  test("returns valid response once successfully added", async () => {
+    const blogObj = {
+      title: "Express.js Fundamentals",
+      author: "Zulaikha Geer",
+      url: "https://medium.com/edureka/expressjs-tutorial-795ad6e65ab3",
+      likes: 0,
+    };
+    await api
+      .post("/api/blogs")
+      .send(blogObj)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const response = await api.get("/api/blogs");
+    expect(response.body).toHaveLength(blogs.length + 1);
+
+    const titles = response.body.map((b) => b.title);
+    expect(titles).toContain("Express.js Fundamentals");
+  }, 100000);
 });
 
 afterAll(async () => {
