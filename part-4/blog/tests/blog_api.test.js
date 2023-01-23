@@ -107,6 +107,21 @@ describe("adding a new blog", () => {
     const titles = response.body.map((b) => b.title);
     expect(titles).toContain("Express.js Fundamentals");
   }, 100000);
+
+  test("likes defaults to 0", async () => {
+    const blogObj = {
+      title: "Express.js Fundamentals",
+      author: "Zulaikha Geer",
+      url: "https://medium.com/edureka/expressjs-tutorial-795ad6e65ab3",
+    };
+    const response = await api
+      .post("/api/blogs")
+      .send(blogObj)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+    expect(response.body.likes).toBeDefined();
+    expect(response.body.likes).toBe(0);
+  });
 });
 
 afterAll(async () => {
