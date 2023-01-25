@@ -117,3 +117,55 @@ describe("favorite blog", () => {
     });
   });
 });
+
+describe("author with most blogs", () => {
+  test("of empty blogs should return empty object", () => {
+    const blogs = [];
+    expect(listHelper.mostBlogs(blogs)).toEqual({});
+  });
+  test("when list has one blog should return name of author and 1", () => {
+    const listWithOneBlog = [
+      {
+        _id: "5a422aa71b54a676234d17f8",
+        title: "Go To Statement Considered Harmful",
+        author: "Edsger W. Dijkstra",
+        url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+        likes: 5,
+        __v: 0,
+      },
+    ];
+    expect(listHelper.mostBlogs(listWithOneBlog)).toEqual({
+      author: "Edsger W. Dijkstra",
+      blogs: 1,
+    });
+  });
+  test("of a bigger list with same most blogs return correct result", () => {
+    const blogs = [
+      {
+        _id: "5a422aa71b54a676234d17f8",
+        title: "Go To Statement Considered Harmful",
+        author: "Edsger W. Dijkstra",
+        url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+        likes: 5,
+        __v: 0,
+      },
+      {
+        _id: "5a422a851b54a676234d17f7",
+        title: "React patterns",
+        author: "Michael Chan",
+        url: "https://reactpatterns.com/",
+        likes: 7,
+        __v: 0,
+      },
+    ];
+    const result = listHelper.mostBlogs(blogs);
+    expect(result.blogs).toBe(1);
+    expect(["Edsger W. Dijkstra", "Michael Chan"]).toContain(result.author);
+  });
+  test("of a bigger list with many entries return correct results", () => {
+    expect(listHelper.mostBlogs(blogs)).toEqual({
+      author: "Robert C. Martin",
+      blogs: 3,
+    });
+  });
+});
