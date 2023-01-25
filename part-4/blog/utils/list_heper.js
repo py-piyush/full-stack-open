@@ -13,16 +13,15 @@ const favoriteBlog = (blogs) => {
 };
 
 const maxKeyValue = (obj) => {
-  let mx = 0;
-  const ans = { author: "", blogs: 0 };
+  let mx_val = 0;
+  let mx_key = "";
   for (let key in obj) {
-    if (obj[key] > mx) {
-      mx = obj[key];
-      ans.author = key;
-      ans.blogs = obj[key];
+    if (obj[key] > mx_val) {
+      mx_val = obj[key];
+      mx_key = key;
     }
   }
-  return ans;
+  return { mx_key, mx_val };
 };
 
 const mostBlogs = (blogs) => {
@@ -32,7 +31,20 @@ const mostBlogs = (blogs) => {
     if (blog.author in authorBlogsMapper) authorBlogsMapper[blog.author] += 1;
     else authorBlogsMapper[blog.author] = 1;
   });
-  return maxKeyValue(authorBlogsMapper);
+  const { mx_key, mx_val } = maxKeyValue(authorBlogsMapper);
+  return { author: mx_key, blogs: mx_val };
+};
+
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) return {};
+  const authorLikesMapper = {};
+  blogs.forEach((blog) => {
+    if (blog.author in authorLikesMapper)
+      authorLikesMapper[blog.author] += blog.likes;
+    else authorLikesMapper[blog.author] = blog.likes;
+  });
+  const { mx_key, mx_val } = maxKeyValue(authorLikesMapper);
+  return { author: mx_key, likes: mx_val };
 };
 
 module.exports = {
@@ -40,4 +52,5 @@ module.exports = {
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 };
