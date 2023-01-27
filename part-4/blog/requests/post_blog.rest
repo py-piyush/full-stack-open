@@ -1,5 +1,6 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBpeXVzaCIsImlkIjoiNjNkMzViOWY0ZDUzMTZlM2E5MTNjYzI5IiwiaWF0IjoxNjc0Nzk2NjczfQ.STZ8zfWDj8ubzYSK6HNTR_xwPHAKeK5UR4XsXNIBP2o
 
 {
     "title":"Express.js Fundamentals",
@@ -11,6 +12,7 @@ Content-Type: application/json
 ###
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBpeXVzaDEiLCJpZCI6IjYzZDM1YmM1NGQ1MzE2ZTNhOTEzY2MyZCIsImlhdCI6MTY3NDc5Njc4N30.ASTCgRsYmgQWYdKYXZHr3MfBzq4U-VBfETJSjWvZp4o
 
 {
     "title":"Refactoring node.js",
