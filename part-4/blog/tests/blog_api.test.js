@@ -2,8 +2,10 @@ const supertest = require("supertest");
 const mongoose = require("mongoose");
 const app = require("../app");
 const api = supertest(app);
+const bcrypt = require("bcrypt");
 
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 const blogs = [
   {
@@ -56,11 +58,29 @@ const blogs = [
   },
 ];
 
+beforeAll(async () => {
+  await User.deleteMany({});
+
+  const passwordHash = await bcrypt.hash("test1password", 10);
+  const user = new User({
+    username: "test1",
+    name: "test1 name",
+    blogs: [],
+    passwordHash,
+  });
+  await user.save();
+});
+
 beforeEach(async () => {
   await Blog.deleteMany({});
+  const users = await User.find({});
+  const user = users[0];
 
   for (let blog of blogs) {
-    const obj = new Blog(blog);
+    const obj = new Blog({
+      ...blog,
+      user: user._id,
+    });
     await obj.save();
   }
 });
@@ -88,6 +108,18 @@ describe("when there are blogs saved", () => {
 });
 
 describe("adding a new blog", () => {
+  let headers;
+  beforeEach(async () => {
+    const user = {
+      username: "test1",
+      password: "test1password",
+    };
+    const loggedUser = await api.post("/api/login").send(user);
+
+    headers = {
+      Authorization: `bearer ${loggedUser.body.token}`,
+    };
+  });
   test("returns valid response once successfully added", async () => {
     const blogObj = {
       title: "Express.js Fundamentals",
@@ -98,6 +130,7 @@ describe("adding a new blog", () => {
     await api
       .post("/api/blogs")
       .send(blogObj)
+      .set(headers)
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
@@ -117,6 +150,7 @@ describe("adding a new blog", () => {
     const response = await api
       .post("/api/blogs")
       .send(blogObj)
+      .set(headers)
       .expect(201)
       .expect("Content-Type", /application\/json/);
     expect(response.body.likes).toBeDefined();
@@ -128,7 +162,11 @@ describe("adding a new blog", () => {
       author: "James Williams",
       likes: 500,
     };
-    const response = await api.post("/api/blogs").send(blogObj).expect(400);
+    const response = await api
+      .post("/api/blogs")
+      .send(blogObj)
+      .set(headers)
+      .expect(400);
     expect(response.body.error).toBe("title or url is missing");
 
     const allBlogs = await api.get("/api/blogs");
@@ -137,9 +175,22 @@ describe("adding a new blog", () => {
 });
 
 describe("deleting a blog", () => {
+  let headers;
+  beforeEach(async () => {
+    const user = {
+      username: "test1",
+      password: "test1password",
+    };
+    const loggedUser = await api.post("/api/login").send(user);
+
+    headers = {
+      Authorization: `bearer ${loggedUser.body.token}`,
+    };
+  });
   test("succeeds with status code 204 if id is valid", async () => {
     const blogToDelete = blogs[0];
-    await api.delete(`/api/blogs/${blogToDelete._id}`).expect(204);
+    // console.log(blogToDelete);
+    await api.delete(`/api/blogs/${blogToDelete._id}`).set(headers).expect(204);
     const response = await api.get("/api/blogs");
     expect(response.body).toHaveLength(blogs.length - 1);
     const titles = response.body.map((b) => b.title);
