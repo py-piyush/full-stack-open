@@ -1,8 +1,9 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog.js");
+const User = require("../models/user.js");
 
 blogsRouter.get("/", async (request, response) => {
-  const blogs = await Blog.find({});
+  const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
   response.json(blogs);
 });
 
@@ -10,9 +11,18 @@ blogsRouter.post("/", async (request, response) => {
   if (!request.body.title || !request.body.url) {
     response.status(400).json({ error: "title or url is missing" });
   }
-  const blog = new Blog(request.body);
+  const body = request.body;
+  const users = await User.find({});
+  const user = users[0];
+  // console.log(user);
+  const blog = new Blog({
+    ...body,
+    user: user._id,
+  });
 
   const result = await blog.save();
+  user.blogs = user.blogs.concat(result._id);
+  await user.save();
   response.status(201).json(result);
 });
 
